@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Command Executor</title>
+</head>
+<body>
+    <h1>Command Executor</h1>
+    <form id="commandForm">
+        <label for="commandInput">Enter Command:</label>
+        <input type="text" id="commandInput" name="command">
+        <br><br>
+        <input type="checkbox" id="enableDropdown"> Enable Dropdown
+        <br><br>
+        <select id="dropdown" disabled>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+        <br><br>
+        <button type="submit">Run Command</button>
+    </form>
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('enableDropdown').addEventListener('change', function(event) {
+            const dropdown = document.getElementById('dropdown');
+            dropdown.disabled = !this.checked;
+        });
+
+        document.getElementById('commandForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const command = document.getElementById('commandInput').value;
+            const dropdownValue = document.getElementById('dropdown').value;
+            
+            // Send the command and dropdown value to the Flask API
+            fetch('/api/run_command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ command: command, dropdownValue: dropdownValue })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText = data.output || data.error || 'Error occurred.';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
