@@ -9,12 +9,20 @@
         <label for="commandInput">Enter Command:</label>
         <input type="text" id="commandInput" name="command">
         <br><br>
-        <input type="checkbox" id="enableDropdown"> Enable Dropdown
+        <input type="checkbox" id="enableDropdown"> App Name
         <br><br>
         <select id="dropdown" disabled>
             <option value="option1">Option 1</option>
             <option value="option2">Option 2</option>
             <option value="option3">Option 3</option>
+        </select>
+        <br><br>
+        <input type="checkbox" id="enableSecondDropdown"> Arguments
+        <br><br>
+        <select id="secondDropdown" disabled>
+            <option value="optionA">Option A</option>
+            <option value="optionB">Option B</option>
+            <option value="optionC">Option C</option>
         </select>
         <br><br>
         <button type="submit">Run Command</button>
@@ -27,18 +35,24 @@
             dropdown.disabled = !this.checked;
         });
 
+        document.getElementById('enableSecondDropdown').addEventListener('change', function(event) {
+            const secondDropdown = document.getElementById('secondDropdown');
+            secondDropdown.disabled = !this.checked;
+        });
+
         document.getElementById('commandForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const command = document.getElementById('commandInput').value;
             const dropdownValue = document.getElementById('dropdown').value;
+            const secondDropdownValue = document.getElementById('secondDropdown').value;
             
-            // Send the command and dropdown value to the Flask API
+            // Send the command and dropdown values to the Flask API
             fetch('/api/run_command', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ command: command, dropdownValue: dropdownValue })
+                body: JSON.stringify({ command: command, dropdownValue: dropdownValue, secondDropdownValue: secondDropdownValue })
             })
             .then(response => response.json())
             .then(data => {
